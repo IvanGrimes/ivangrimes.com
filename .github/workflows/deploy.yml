@@ -182,5 +182,6 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           BUILD_ENV: |
+            GITHUB_TOKEN=${{ secrets.GH_TOKEN }}
             GITHUB_COMMIT_SHA=${{ github.sha }}
             DOMAIN=${{ needs.domain.outputs.DOMAIN }}
