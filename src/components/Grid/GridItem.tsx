@@ -3,9 +3,9 @@ import { GridItem as BaseGridItem } from '@chakra-ui/react'
 import { Columns } from './const'
 
 export type GridItemProps = PropsWithChildren<{
-  colSpan: Columns
-  colStart: Columns
-  colEnd: Columns
+  colSpan?: Columns
+  colStart?: Columns
+  colEnd?: Columns
 }>
 
 export const GridItem = ({
