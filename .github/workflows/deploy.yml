@@ -1,0 +1,186 @@
+name: deploy
+on:
+  push:
+    branches:
+      - 'main'
+      - 'develop'
+
+jobs:
+  environment:
+    runs-on: ubuntu-latest
+    outputs:
+      ENVIRONMENT: ${{steps.environment.outputs.ENVIRONMENT}}
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Define environment
+        id: environment
+        run: |
+          if [[ $REF == refs/heads/main ]]
+          then
+            echo ::set-output name=ENVIRONMENT::Production
+          else
+            echo ::set-output name=ENVIRONMENT::Development
+          fi
+        env:
+          REF: ${{ github.ref }}
+
+      - name: Environment
+        run: |
+          echo "Environment is set to ${{steps.environment.outputs.ENVIRONMENT}}"
+
+  domain:
+    runs-on: ubuntu-latest
+    needs: [ environment ]
+    outputs:
+      DOMAIN: ${{steps.domain.outputs.DOMAIN}}
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Define domain
+        id: domain
+        run: |
+          if [[ $ENVIRONMENT == Production ]]
+          then
+            echo ::set-output name=DOMAIN::ivangrimes.com
+          elif [[ $ENVIRONMENT == Development ]]
+          then
+            echo ::set-output name=DOMAIN::dev.ivangrimes.com
+          else
+            echo ::set-output name=DOMAIN::${GITHUB_HEAD_REF}.ivangrimes.com
+          fi
+        env:
+          ENVIRONMENT: ${{ needs.environment.outputs.ENVIRONMENT }}
+          BRANCH_NAME: ${{ github.head.ref }}
+
+      - name: Domain
+        run: |
+          echo "Domain is set to ${{ steps.domain.outputs.DOMAIN }}"
+
+  changes:
+    name: Has code changes
+    runs-on: ubuntu-latest
+    needs: [ domain ]
+    outputs:
+      HAS_CODE_CHANGES: ${{ steps.changes.outputs.HAS_CODE_CHANGES }}
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v2
+
+      - name: ⎔ Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: 📥 Download deps
+        uses: bahmutov/npm-install@v1
+
+      - name: 🔎 Determine code changes
+        id: changes
+        run: |
+          echo ::set-output name=HAS_CODE_CHANGES::$(yarn --silent ts-node --project tsconfig.json ./scripts/hasCodeChanges.ts)
+        env:
+          DOMAIN: ${{ needs.domain.outputs.DOMAIN }}
+          GITHUB_COMMIT_SHA: ${{ github.sha }}
+
+      - name: ❓ Has code changes
+        run: |
+          echo "Has code changes is set to ${{ steps.changes.outputs.HAS_CODE_CHANGES }}"
+
+  revalidate:
+    name: Revalidate content
+    runs-on: ubuntu-latest
+    needs: [ domain, changes ]
+    if: needs.changes.outputs.HAS_CODE_CHANGES == 'false'
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v2
+
+      - name: ⎔ Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: 📥 Download deps
+        uses: bahmutov/npm-install@v1
+
+      - name: 🔎 Revalidate content
+        id: changes
+        run: |
+          echo ::set-output name=HAS_CODE_CHANGES::$(yarn ts-node --project tsconfig.json ./scripts/revalidateContent.ts)
+        env:
+          DOMAIN: ${{ needs.domain.outputs.DOMAIN }}
+          GITHUB_COMMIT_SHA: ${{ github.sha }}
+
+  typecheck:
+    name: ʦ TypeScript
+    runs-on: ubuntu-latest
+    needs: [ changes ]
+    if: needs.changes.outputs.HAS_CODE_CHANGES == 'true'
+    steps:
+      - name: 🛑 Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v2
+
+      - name: ⎔ Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: 📥 Download deps
+        uses: bahmutov/npm-install@v1
+
+      - name: 🔎 Type check
+        run: yarn type-check
+
+  lint:
+    name: ⬣ ESLint
+    runs-on: ubuntu-latest
+    needs: [ changes ]
+    if: needs.changes.outputs.HAS_CODE_CHANGES == 'true'
+    steps:
+      - name: 🛑 Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v2
+
+      - name: ⎔ Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: 📥 Download deps
+        uses: bahmutov/npm-install@v1
+
+      - name: 🔬 Lint
+        run: yarn lint
+
+  deploy:
+    name: 🚀 Deploy
+    runs-on: ubuntu-latest
+    needs: [ environment, domain, changes, lint, typecheck ]
+    if: needs.changes.outputs.HAS_CODE_CHANGES == 'true'
+    steps:
+      - name: 🛑 Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Deploy
+        uses: BetaHuhn/deploy-to-vercel-action@v1
+        with:
+          PRODUCTION: ${{ needs.environment.outputs.ENVIRONMENT == 'Production' }}
+          GITHUB_DEPLOYMENT_ENV: ${{ needs.environment.outputs.ENVIRONMENT }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          BUILD_ENV: |
+            GITHUB_COMMIT_SHA=${{ github.sha }}
+            DOMAIN=${{ needs.domain.outputs.DOMAIN }}

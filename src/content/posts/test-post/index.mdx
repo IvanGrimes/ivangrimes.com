@@ -1,0 +1,22 @@
+---
+title: Test blog post 1337
+date: 2022-05-21
+description: Why using hooks like beforeEach as a mechanism for code reuse leads to unmaintainable tests and how to avoid it.
+categories:
+  - testing
+meta:
+  keywords:
+    - react
+    - typescript
+  author: Ivan Graims
+---
+
+I want to show you something. What I'm going to show is a general testing
+principle, applied to a React component test. So even though the example is a
+React one, hopefully it helps communicate the concept properly.
+
+<callout-info class="aside">
+  Note: my point isn't that nesting is bad by itself, but rather that it
+  naturally encourages using test hooks (such as `beforeEach`) as a mechanism
+  for code reuse which does lead to unmaintainable tests. Please read on...
+</callout-info>
