@@ -1,15 +1,15 @@
 import React from 'react'
+import DarkModeIcon from '@mui/icons-material/DarkMode'
+import LightModeIcon from '@mui/icons-material/LightMode'
 import { useThemeProvider } from '../../../ThemeProvider'
-import { Grid } from '../../../Grid'
+import { IconButton } from '../../../IconButton'
 
 export const ThemeSwitch = () => {
-  const { toggleMode } = useThemeProvider()
+  const { mode, toggleMode } = useThemeProvider()
 
   return (
-    <Grid container>
-      <button type="button" onClick={toggleMode}>
-        toggle theme
-      </button>
-    </Grid>
+    <IconButton color="default" onClick={toggleMode}>
+      {mode === 'light' ? <DarkModeIcon /> : <LightModeIcon />}
+    </IconButton>
   )
 }
