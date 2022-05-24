@@ -4,13 +4,14 @@ import { Container } from '../../Container'
 import { Grid } from '../../Grid'
 import { Navigation } from './Navigation'
 import { Box } from '../../Box'
+import { ThemeSwitch } from './ThemeSwitch'
 
 export type HeaderProps = unknown
 
 export const Header = () => (
   <Box
     sx={{
-      paddingY: 1,
+      paddingY: 1.5,
       borderBottom: '1px solid',
       borderColor: 'primary.main',
     }}
@@ -22,6 +23,9 @@ export const Header = () => (
         </Grid>
         <Grid item xs={6}>
           <Navigation />
+        </Grid>
+        <Grid container item xs={3} justifyContent="flex-end">
+          <ThemeSwitch />
         </Grid>
       </Grid>
     </Container>
