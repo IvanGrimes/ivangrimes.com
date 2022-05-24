@@ -5,27 +5,63 @@ import { Grid } from '../../Grid'
 import { Navigation } from './Navigation'
 import { Box } from '../../Box'
 import { ThemeSwitch } from './ThemeSwitch'
+import { Menu } from './Menu'
 
 export type HeaderProps = unknown
 
 export const Header = () => (
   <Box
-    sx={{
+    sx={(theme) => ({
+      position: 'relative',
       paddingY: 2,
       borderBottom: '1px solid',
-      borderColor: 'primary.main',
-    }}
+      borderColor: 'grey.500',
+      backgroundColor: theme.palette.mode === 'light' ? 'grey.100' : 'grey.900',
+    })}
   >
     <Container>
-      <Grid container alignItems="center" spacing={2}>
-        <Grid container item xs={4} md={3}>
+      <Grid
+        container
+        alignItems="center"
+        justifyContent="space-between"
+        spacing={2}
+      >
+        <Grid container item xs={6} sm={3}>
           <Logo />
         </Grid>
-        <Grid item xs={5} md={6}>
+        <Grid
+          item
+          sm={6}
+          sx={(theme) => ({
+            [theme.breakpoints.down('sm')]: {
+              display: 'none',
+            },
+          })}
+        >
           <Navigation />
         </Grid>
-        <Grid container item xs={3} justifyContent="flex-end">
-          <ThemeSwitch />
+        <Grid
+          container
+          item
+          xs={6}
+          sm={3}
+          spacing={1}
+          justifyContent="flex-end"
+        >
+          <Grid item>
+            <ThemeSwitch />
+          </Grid>
+
+          <Grid
+            item
+            sx={(theme) => ({
+              [theme.breakpoints.up('sm')]: {
+                display: 'none',
+              },
+            })}
+          >
+            <Menu />
+          </Grid>
         </Grid>
       </Grid>
     </Container>
