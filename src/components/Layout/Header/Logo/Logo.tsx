@@ -1,8 +1,6 @@
 import React from 'react'
 import { Path } from './Logo.styled'
 
-export type LogoProps = unknown
-
 export const Logo = () => (
   <svg
     width="112"

@@ -7,8 +7,6 @@ import { Box } from '../../Box'
 import { ThemeSwitch } from './ThemeSwitch'
 import { Menu } from './Menu'
 
-export type HeaderProps = unknown
-
 export const Header = () => (
   <Box
     sx={(theme) => ({

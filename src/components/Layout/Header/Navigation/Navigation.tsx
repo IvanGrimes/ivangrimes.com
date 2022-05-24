@@ -3,8 +3,6 @@ import { Grid } from '../../../Grid'
 import { List, ListItem, Link } from './Navigation.styled'
 import { navigationList } from '../navigationList'
 
-export type NavigationProps = unknown
-
 export const Navigation = () => (
   <Grid container component="nav">
     <List>
