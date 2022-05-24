@@ -1,28 +1,10 @@
-import React, { PropsWithChildren } from 'react'
-import {
-  Container as BaseContainer,
-  ContainerProps as BaseContainerProps,
-} from '@chakra-ui/react'
+import React from 'react'
+import BaseContainer, {
+  type ContainerProps as BaseContainerProps,
+} from '@mui/material/Container'
 
-export type ContainerProps = PropsWithChildren<
-  Pick<BaseContainerProps, 'paddingY'> & {
-    className?: string
-  }
->
+export type ContainerProps = Omit<BaseContainerProps, 'maxWidth' | 'fixed'>
 
-export const Container = ({
-  className,
-  paddingY,
-  children,
-}: ContainerProps) => (
-  <BaseContainer
-    className={className}
-    maxWidth="1440px"
-    minHeight="100%"
-    paddingY={paddingY}
-    paddingX={24}
-    marginX="auto"
-  >
-    {children}
-  </BaseContainer>
+export const Container = (props: ContainerProps) => (
+  <BaseContainer {...props} maxWidth="lg" />
 )

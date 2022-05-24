@@ -1,2 +1,1 @@
-export { Box } from '@chakra-ui/react'
-export type { BoxProps } from '@chakra-ui/react'
+export { default as Box, type BoxProps } from '@mui/material/Box'

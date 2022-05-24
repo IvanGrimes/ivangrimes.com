@@ -8,7 +8,7 @@ export type LayoutProps = PropsWithChildren<unknown>
 export const Layout = ({ children }: LayoutProps) => (
   <div>
     <Header />
-    <StyledContainer paddingY={8}>{children}</StyledContainer>
+    <StyledContainer>{children}</StyledContainer>
     <Footer />
   </div>
 )

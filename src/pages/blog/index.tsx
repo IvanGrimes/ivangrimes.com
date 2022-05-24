@@ -1,9 +1,8 @@
 import React, { useMemo } from 'react'
 import type { GetStaticProps, NextPage } from 'next'
 import Link from 'next/link'
-import styles from '../../styles/Home.module.css'
 import { blogService, ServerSidePost } from '../../services/blog'
-import { getMdxComponent } from '../../hooks/useMdx'
+import { getMdxComponent } from '../../hooks'
 
 type Props = {
   postList: ServerSidePost[]
@@ -44,7 +43,7 @@ const Blog: NextPage<Props> = ({ postList }) => {
     [postList]
   )
 
-  return <div className={styles.container}>{list}</div>
+  return <div>{list}</div>
 }
 
 export default Blog
