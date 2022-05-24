@@ -10,7 +10,6 @@ class BlogController {
   private static async mapRawPostToServerSidePost(
     rawPost: RawPost
   ): Promise<ServerSidePost> {
-    console.log(1)
     const { frontmatter, code, matter } = await MDX.bundleMDX({
       source: rawPost.content,
       files: {},

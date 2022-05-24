@@ -1,10 +1,14 @@
 import React from 'react'
-import '../styles/globals.css'
 import type { AppProps } from 'next/app'
+import { Layout, ThemeProvider } from '../components'
 
 const MyApp = ({ Component, pageProps }: AppProps) => (
-  // eslint-disable-next-line react/jsx-props-no-spreading
-  <Component {...pageProps} />
+  <ThemeProvider>
+    <Layout>
+      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+      <Component {...pageProps} />
+    </Layout>
+  </ThemeProvider>
 )
 
 export default MyApp
