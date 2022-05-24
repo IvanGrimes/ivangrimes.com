@@ -8,13 +8,15 @@
     "start": "next start",
     "prepare": "husky install",
     "type-check": "tsc",
-    "lint": "eslint src/**/*.{ts,tsx}"
+    "lint": "eslint src/**/*.{ts,tsx}",
+    "analyze": "ANALYZE=true yarn build"
   },
   "dependencies": {
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
     "@mui/icons-material": "^5.8.0",
     "@mui/material": "^5.8.1",
+    "@next/bundle-analyzer": "^12.1.6",
     "@octokit/plugin-rest-endpoint-methods": "^5.13.0",
     "@sentry/nextjs": "^6.19.7",
     "@testing-library/react": "^13.2.0",
